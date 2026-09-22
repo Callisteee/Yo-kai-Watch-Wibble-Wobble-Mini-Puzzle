@@ -1,0 +1,1 @@
+var e=``+new URL(`Box2D.simd-B7MBBYJO.wasm`,import.meta.url).href;export{e as default};

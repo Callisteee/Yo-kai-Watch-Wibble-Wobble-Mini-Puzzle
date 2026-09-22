@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>YWP ぷにパズル (繋ぎ消し)</title>
+  <script>
+    (() => {
+      const KEY = 'ywp-save-v2';
+      window.ytgame = {
+        SDK_VERSION: 'offline-merged', IN_PLAYABLES_ENV: false,
+        system: {
+          getLanguage: () => { try { const lang = String(navigator.language || '').toLowerCase(); return lang.startsWith('ja') ? 'ja' : 'en'; } catch (_) { return 'en'; } },
+          isAudioEnabled: () => true,
+          onAudioEnabledChange: () => {},
+          onPause: () => {}, onResume: () => {}
+        },
+        game: {
+          firstFrameReady: () => {}, gameReady: () => {},
+          saveData: data => { try { localStorage.setItem(KEY, typeof data === 'string' ? data : JSON.stringify(data)); } catch (_) {} },
+          loadData: () => { try { return localStorage.getItem(KEY); } catch (_) { return null; } }
+        },
+        ads: { requestInterstitialAd: () => Promise.resolve() }
+      };
+    })();
+  </script>
+  <script>
+    // Fixes a tiling-background artifact: percentage-based background-size ("auto 100%")
+    // gives the repeating tile a fractional pixel width, and browsers round each repeated
+    // copy slightly differently, which visually looks like the pattern gets "compressed"
+    // right at the edges of the game. Rounding to a whole pixel size up front removes that.
+    (() => {
+      const applySize = () => {
+        const img = new Image();
+        img.onload = () => {
+          const targetH = Math.round(window.innerHeight);
+          const scale = targetH / img.naturalHeight;
+          const targetW = Math.round(img.naturalWidth * scale);
+          document.documentElement.style.setProperty('--edge-bg-w', targetW + 'px');
+          document.documentElement.style.setProperty('--edge-bg-h', targetH + 'px');
+        };
+        img.src = './resources/common/edge_image01.png';
+      };
+      applySize();
+      window.addEventListener('resize', applySize);
+    })();
+  </script>
+  <style>
+    html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;}
+    body{position:relative;display:flex;align-items:stretch;justify-content:center;}
+    /* Dedicated background layer, independent from body's own background so the game
+       can never overwrite it (e.g. by setting an inline background-color on body/html). */
+    body::before{
+      content:'';
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background-color:#2f68bd;
+      background-image:url('./resources/common/edge_image01.png');
+      background-repeat:repeat;
+      background-position:center top;
+      /* Size is set in whole pixels by the script below (see --edge-bg-w/--edge-bg-h).
+         A percentage-based size (e.g. "auto 100%") forces the browser to compute a
+         fractional pixel width per tile, and each repeated tile can round differently,
+         which is what makes the pattern look "compressed" right at its edges. */
+      background-size: var(--edge-bg-w, auto) var(--edge-bg-h, 100%);
+      pointer-events:none;
+    }
+    #game-shell{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent !important;position:relative;z-index:1;}
+    #app{position:relative;width:min(640px,100vw);height:100%;flex:0 1 640px;overflow:hidden;background:transparent !important;z-index:1;}
+    @media (max-aspect-ratio: 640/1136){#app{width:100vw;height:100vh;flex:1 1 auto;}}
+  </style>
+  <script type="module" crossorigin src="./assets/index-CMgiXgEd.js" nonce="mX43OW_Qs3PWc93-0xzQNQ"></script>
+  <link rel="modulepreload" crossorigin href="./assets/preload-helper-kNaey6uv.js">
+  <link rel="modulepreload" crossorigin href="./assets/chunk-QTnfLwEv.js">
+  <link rel="modulepreload" crossorigin href="./assets/Geometry-DHg4pYyH.js">
+  <link rel="modulepreload" crossorigin href="./assets/RenderTargetSystem-DALzXY-N.js">
+  <link rel="modulepreload" crossorigin href="./assets/getTextureBatchBindGroup-CDPp3teN.js">
+  <link rel="modulepreload" crossorigin href="./assets/canvasUtils-vbTkuuNQ.js">
+  <link rel="modulepreload" crossorigin href="./assets/CanvasRenderer-B1Nqw2ew.js">
+  <link rel="modulepreload" crossorigin href="./assets/BufferResource-BT3FMa7R.js">
+  <link rel="modulepreload" crossorigin href="./assets/CanvasPool-rkbEJ2j6.js">
+</head>
+<body>
+  <div id="game-shell"><div id="app"></div></div>
+</body>
+</html>
