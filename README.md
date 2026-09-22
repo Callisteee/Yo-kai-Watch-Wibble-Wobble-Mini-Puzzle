@@ -14,12 +14,12 @@ start_game.bat
 
 - On Linux/macOS:
 ```bash
-'./start_game.sh'
+./start_game.sh
 ```
 
 You can also launch it manually with:
 ```bash
-'python start_game.py'
+python start_game.py
 ```
 
 No Internet connection is required to play once all resources are available locally.
