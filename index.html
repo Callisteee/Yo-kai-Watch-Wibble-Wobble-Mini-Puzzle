@@ -25,10 +25,6 @@
     })();
   </script>
   <script>
-    // Fixes a tiling-background artifact: percentage-based background-size ("auto 100%")
-    // gives the repeating tile a fractional pixel width, and browsers round each repeated
-    // copy slightly differently, which visually looks like the pattern gets "compressed"
-    // right at the edges of the game. Rounding to a whole pixel size up front removes that.
     (() => {
       const applySize = () => {
         const img = new Image();
@@ -48,8 +44,6 @@
   <style>
     html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;}
     body{position:relative;display:flex;align-items:stretch;justify-content:center;}
-    /* Dedicated background layer, independent from body's own background so the game
-       can never overwrite it (e.g. by setting an inline background-color on body/html). */
     body::before{
       content:'';
       position:fixed;
@@ -59,10 +53,6 @@
       background-image:url('./resources/common/edge_image01.png');
       background-repeat:repeat;
       background-position:center top;
-      /* Size is set in whole pixels by the script below (see --edge-bg-w/--edge-bg-h).
-         A percentage-based size (e.g. "auto 100%") forces the browser to compute a
-         fractional pixel width per tile, and each repeated tile can round differently,
-         which is what makes the pattern look "compressed" right at its edges. */
       background-size: var(--edge-bg-w, auto) var(--edge-bg-h, 100%);
       pointer-events:none;
     }
